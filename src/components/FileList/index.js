@@ -3,7 +3,7 @@ import { Container, FileInfo, Preview } from './styles';
 import {CircularProgressbar} from 'react-circular-progressbar';
 import {MdCheckCircle, MdError, MdLink} from 'react-icons/md';
 
-const FileList = ({files}) => 
+const FileList = ({files, onDelete}) => 
     <Container>
         { 
             files.map(uploadedFile => (
@@ -13,12 +13,12 @@ const FileList = ({files}) =>
                         <div>
                             <strong>{uploadedFile.name}</strong>
                             {uploadedFile.uploaded && (
-                                <span>{uploadedFile.readableSize}<button onClick={()=>{}}>Excluir</button></span>
+                                <span>{uploadedFile.readableSize}<button onClick={() => onDelete(uploadedFile.id)}>Excluir</button></span>
                             )}
                         </div>
                     </FileInfo>
                     <div>
-                        {!uploadedFile.error && (
+                        {!uploadedFile.error && !uploadedFile.uploaded && (
                             <CircularProgressbar progress={uploadedFile.progress}
                                 styles={{
                                     text: {
@@ -52,9 +52,8 @@ const FileList = ({files}) =>
                             </a>
                         )}
 
-                          {!!uploadedFile.uploaded && <MdCheckCircle size={24} color="#78e5d5" />}  
-                          {uploadedFile.error && <MdError size={24} color="#e57878" />}
-                        
+                        {!!uploadedFile.uploaded && <MdCheckCircle size={24} color="#78e5d5" />}  
+                        {uploadedFile.error && <MdError size={24} color="#e57878" />}
                     </div>
                 </li>
             ))

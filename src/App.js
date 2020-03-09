@@ -13,6 +13,45 @@ class App extends Component {
     uploadedFiles: []
   };
 
+  async componentDidMount() {
+    const response = await api.get('/posts');
+    
+    this.setState({
+      uploadedFiles: response.data.map(file => ({
+        id: file._id,
+        name: file.name,
+        readableSize: filesize(file.size),
+        preview: file.url,
+        uploaded: true,
+        url: file.url,
+      }))
+    })
+  }
+
+  componentWillUnmount() {
+    this.state.uploadedFiles.forEach(file => URL.revokeObjectURL(file.preview));
+  }
+
+  handleDelete = async id => {
+    api.delete(`/posts/${id}`)
+    const response = await api.get('/posts');
+  
+    this.setState({
+      uploadedFiles: response.data.map(file => ({
+        id: file._id,
+        name: file.name,
+        readableSize: filesize(file.size),
+        preview: file.url,
+        uploaded: true,
+        url: file.url,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          }))
+    })
+    //this.setState({
+      // uploadedFile: this.state.uploadedFiles.filter(uploadedFile => uploadedFile.id !== id),
+    //})
+    
+  };
+
   handleUpload = (files) => {
     const uploadedFiles = files.map(file => ({
       file,
@@ -51,8 +90,17 @@ class App extends Component {
           uploaded: progress === 100 ? true : false
         })
       }
-    }).catch(error => {
-      
+    }).then(response => {
+      this.uploadFile(uploadedFile.id, {
+        uploaded: true,
+        id: response.data._id, 
+        url: response.data.url,
+      })
+    })
+    .catch(error => {
+      this.uploadFile(uploadedFile.id, {
+        error: true,
+      })
     });
   };
 
@@ -64,7 +112,7 @@ class App extends Component {
                 <Upload onUpload={this.handleUpload}/>
 
                 { !! uploadedFiles.length && (
-                  <FileList files={uploadedFiles}/>
+                  <FileList files={uploadedFiles} onDelete={this.handleDelete}/>
                 )}
                 
               </Content>
