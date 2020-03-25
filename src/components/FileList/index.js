@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, FileInfo, Preview } from './styles';
+import { Container, FileInfo, Preview, Button } from './styles';
 import {CircularProgressbar} from 'react-circular-progressbar';
 import {MdCheckCircle, MdError, MdLink} from 'react-icons/md';
 
@@ -13,7 +13,7 @@ const FileList = ({files, onDelete}) =>
                         <div>
                             <strong>{uploadedFile.name}</strong>
                             {uploadedFile.uploaded && (
-                                <span>{uploadedFile.readableSize}<button onClick={() => onDelete(uploadedFile.id)}>Excluir</button></span>
+                                <span>{uploadedFile.readableSize}<Button onClick={() => onDelete(uploadedFile.id)}>Excluir</Button></span>
                             )}
                         </div>
                     </FileInfo>
